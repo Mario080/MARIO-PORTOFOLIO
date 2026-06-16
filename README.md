@@ -7,7 +7,7 @@ I am a Computer Science graduate passionate about technology, leadership, commun
 
 ## Portfolio Website
 🔗 Live Portfolio:
-https://your-portfolio-link.vercel.app
+https://mario-portofolio-sigma.vercel.app/
 
 ## Featured Projects
 
