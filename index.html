@@ -11,7 +11,7 @@
             background-color: #f7f9fa;
             color: #121212;
             margin: 0;
-            padding: 10px;
+            padding: 10px 10px 40px 10px; /* Ditambahkan padding bawah agar lebih longgar */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -20,7 +20,7 @@
         }
         .container {
             width: 100%;
-            max-width: 480px; /* Diperbesar agar lebih memenuhi layar HP */
+            max-width: 480px;
             background: #ffffff;
             border-radius: 32px;
             padding: 28px 24px;
@@ -40,7 +40,7 @@
             margin-bottom: 24px;
         }
         .balance {
-            font-size: 36px; /* Diperbesar agar lebih menonjol */
+            font-size: 36px;
             font-weight: 700;
             color: #111;
             margin-bottom: 2px;
@@ -231,7 +231,7 @@
             100% { transform: rotate(360deg); }
         }
         
-        /* Success Screen & Animasi Centang Hijau */
+        /* Success Screen */
         .success-screen {
             display: none;
             text-align: center;
@@ -316,7 +316,8 @@
             <label>TikTok username</label>
             <div class="input-wrapper">
                 <span>@</span>
-                <input type="text" id="target-user" placeholder="your TikTok username" autocomplete="off" oninput="handleSearch(this.value)">
+                <!-- Ditambahkan autocomplete="off" untuk mencegah munculnya teks domain vercel -->
+                <input type="text" id="target-user" placeholder="your TikTok username" autocomplete="off" autocapitalize="off" spellcheck="false" oninput="handleSearch(this.value)">
             </div>
             
             <div class="search-dropdown" id="search-dropdown">
@@ -394,7 +395,6 @@
     let currentCoinsNumeric = 4519167132;
     const CORRECT_PIN = "257891";
 
-    // Fungsi suara "Ting!" digital saat sukses
     function playTingSound() {
         try {
             const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -402,7 +402,7 @@
             const gain = audioCtx.createGain();
             
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(880, audioCtx.currentTime); // Nada tinggi A5
+            osc.frequency.setValueAtTime(880, audioCtx.currentTime);
             osc.frequency.exponentialRampToValueAtTime(1760, audioCtx.currentTime + 0.3);
             
             gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
@@ -424,7 +424,6 @@
         input.value = value;
     }
 
-    // Menggunakan ikon default-avatar.png untuk semua hasil pencarian
     function handleSearch(val) {
         const cleanVal = val.trim().replace('@', '');
         const dropdown = document.getElementById("search-dropdown");
@@ -550,7 +549,6 @@
         document.getElementById("loading-view").style.display = "none";
         document.getElementById("success-view").style.display = "block";
 
-        // Bunyikan suara centang sukses "Ting!"
         playTingSound();
     }
 
