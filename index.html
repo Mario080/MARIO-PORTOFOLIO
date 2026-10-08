@@ -46,24 +46,16 @@
         }
         .sub-balance {
             font-size: 12px;
-            color: #fe2c55; /* Warna merah sesuai permintaan */
+            color: #fe2c55;
             margin-bottom: 4px;
             font-weight: 600;
         }
-        /* Lingkaran Koin Emas */
-        .gold-coin {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
+        /* Styling untuk Gambar Koin TikTok Lokal */
+        .tiktok-coin-img {
             width: 16px;
             height: 16px;
-            background: linear-gradient(135deg, #ffd700, #ffaa00);
-            border-radius: 50%;
-            color: white;
-            font-size: 9px;
-            font-weight: bold;
-            box-shadow: 0 1px 3px rgba(255, 170, 0, 0.4);
             vertical-align: middle;
+            object-fit: contain;
             margin-right: 2px;
         }
         .balance-policy {
@@ -169,7 +161,6 @@
             margin-bottom: 20px;
             text-align: left;
         }
-        /* Warna Biru untuk Tulisan Rewards Policy */
         .policy-link {
             color: #1877f2;
             font-weight: 600;
@@ -312,7 +303,7 @@
         <h2>TikTok Coins Balance</h2>
         <div class="balance-section">
             <div class="balance" id="display-balance">$54,681,922.30</div>
-            <div class="sub-balance" id="sub-balance-text">= $54,681,922.30 (<span class="gold-coin">🪙</span> 4,519,167,132)</div>
+            <div class="sub-balance" id="sub-balance-text">= $54,681,922.30 (<img src="coin.png" class="tiktok-coin-img" alt="coin"> 4,519,167,132)</div>
             <div class="balance-policy">Available balance to exchange the Coins</div>
         </div>
         
@@ -328,7 +319,6 @@
             </div>
         </div>
 
-        <!-- Kolom koin dengan inputmode="numeric" agar keyboard HP langsung angka -->
         <div class="form-group">
             <label>Number of coins</label>
             <input type="text" id="coin-amount" placeholder="0" inputmode="numeric" pattern="[0-9]*" autocomplete="off" oninput="formatCoinInput(this)">
@@ -369,7 +359,7 @@
     <div class="success-screen" id="success-view">
         <div class="success-icon">✓</div>
         <div class="success-title">Exchange Completed!</div>
-        <div class="success-subtitle" id="exchanged-desc">You exchanged for 4,000,000 Coins</div>
+        <div class="success-subtitle" id="exchanged-desc">You exchanged for <img src="coin.png" class="tiktok-coin-img" alt="coin"> 4,000,000 Coins</div>
 
         <div class="details-box">
             <div class="details-row">
@@ -536,12 +526,12 @@
         
         const formattedBalance = "$" + currentBalanceNumeric.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
         document.getElementById("display-balance").innerText = formattedBalance;
-        document.getElementById("sub-balance-text").innerHTML = `= ${formattedBalance} (<span class="gold-coin">🪙</span> ${currentCoinsNumeric.toLocaleString('id-ID')})`;
+        document.getElementById("sub-balance-text").innerHTML = `= ${formattedBalance} (<img src="coin.png" class="tiktok-coin-img" alt="coin"> ${currentCoinsNumeric.toLocaleString('id-ID')})`;
 
         const now = new Date();
         const timeString = now.toLocaleDateString('en-US') + ", " + now.toLocaleTimeString('en-US');
 
-        document.getElementById("exchanged-desc").innerText = `You exchanged for 🪙 ${formattedCoins}`;
+        document.getElementById("exchanged-desc").innerHTML = `You exchanged for <img src="coin.png" class="tiktok-coin-img" alt="coin"> ${formattedCoins}`;
         document.getElementById("res-user").innerText = formattedUser;
         document.getElementById("res-coins").innerText = formattedCoins;
         document.getElementById("res-amount").innerText = calculatedDeduction;
