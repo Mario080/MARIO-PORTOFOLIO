@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -169,7 +169,7 @@
             background: #e91e43;
         }
 
-        /* Layar Masukkan PIN (6 Digit) */
+        /* Layar PIN Screen */
         .pin-screen {
             display: none;
             text-align: center;
@@ -196,7 +196,7 @@
             background: #fff;
         }
 
-        /* Layar Loading E-Wallet */
+        /* Loading Screen */
         .loading-screen {
             display: none;
             text-align: center;
@@ -216,7 +216,7 @@
             100% { transform: rotate(360deg); }
         }
         
-        /* Halaman Sukses */
+        /* Success Screen */
         .success-screen {
             display: none;
             text-align: center;
@@ -273,7 +273,7 @@
 <body>
 
 <div class="container">
-    <!-- Tampilan Form Input -->
+    <!-- Form View -->
     <div id="form-view">
         <h2>TikTok Coins Balance</h2>
         <div class="balance-section">
@@ -306,10 +306,10 @@
         <button class="btn" onclick="validasiForm()">Exchange</button>
     </div>
 
-    <!-- Tampilan Input PIN 6 Digit -->
+    <!-- PIN Screen (6 Digits) -->
     <div class="pin-screen" id="pin-view">
-        <h3 style="margin-top:0; color:#111;">Masukkan PIN Keamanan</h3>
-        <p style="font-size: 13px; color: #666;">Masukkan 6 digit PIN dompet Anda</p>
+        <h3 style="margin-top:0; color:#111;">Enter Security PIN</h3>
+        <p style="font-size: 13px; color: #666;">Please enter your 6-digit wallet PIN</p>
         
         <div class="pin-inputs">
             <input type="password" maxlength="1" class="pin-box" id="p1" oninput="moveFocus(this, 'p2')" autocomplete="off">
@@ -320,17 +320,17 @@
             <input type="password" maxlength="1" class="pin-box" id="p6" oninput="verifikasiPin(this)" autocomplete="off">
         </div>
         
-        <button class="btn" style="background:#888; margin-top:10px;" onclick="batalPin()">Batal</button>
+        <button class="btn" style="background:#888; margin-top:10px;" onclick="batalPin()">Cancel</button>
     </div>
 
-    <!-- Tampilan Loading E-Wallet -->
+    <!-- Loading Screen -->
     <div class="loading-screen" id="loading-view">
         <div class="spinner"></div>
         <div style="font-size: 16px; font-weight: 600; color: #111;">Processing Transfer...</div>
-        <div style="font-size: 13px; color: #777; margin-top: 5px;">Menghubungkan ke server TikTok Live...</div>
+        <div style="font-size: 13px; color: #777; margin-top: 5px;">Connecting to TikTok Live servers...</div>
     </div>
 
-    <!-- Tampilan Sukses -->
+    <!-- Success Screen -->
     <div class="success-screen" id="success-view">
         <div class="success-icon">✓</div>
         <div class="success-title">Exchange Completed!</div>
@@ -385,7 +385,7 @@
                     <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=${cleanVal}" alt="avatar">
                     <div>
                         <div class="s-text">@${cleanVal}</div>
-                        <div class="s-sub">Ketuk untuk pilih akun</div>
+                        <div class="s-sub">Tap to select account</div>
                     </div>
                 </div>
             `;
@@ -423,30 +423,26 @@
         }
     });
 
-    // Langkah 1: Validasi form sebelum masuk layar PIN
     function validasiForm() {
         const rawInput = document.getElementById("target-user").value.trim();
         const coinInputStr = document.getElementById("coin-amount").value.trim();
 
         if (rawInput === "" || coinInputStr === "") {
-            alert("Harap masukkan username dan jumlah koin terlebih dahulu!");
+            alert("Please enter the recipient username and coin amount first!");
             return;
         }
 
-        // Pindah ke layar PIN
         document.getElementById("form-view").style.display = "none";
         document.getElementById("pin-view").style.display = "block";
         document.getElementById("p1").focus();
     }
 
-    // Otomatis pindah kotak PIN saat diketik
     function moveFocus(current, nextFieldId) {
         if (current.value.length === 1) {
             document.getElementById(nextFieldId).focus();
         }
     }
 
-    // Langkah 2: Verifikasi 6 digit PIN (257891)
     function verifikasiPin(current) {
         if (current.value.length === 1) {
             let enteredPin = 
@@ -459,7 +455,6 @@
 
             if (enteredPin.length === 6) {
                 if (enteredPin === CORRECT_PIN) {
-                    // PIN Benar, lanjut ke loading lalu sukses
                     document.getElementById("pin-view").style.display = "none";
                     document.getElementById("loading-view").style.display = "block";
 
@@ -467,8 +462,7 @@
                         prosesExchangeFinal();
                     }, 3000);
                 } else {
-                    // PIN Salah
-                    alert("PIN Salah! Silakan coba lagi.");
+                    alert("Incorrect PIN! Please try again.");
                     resetPinInputs();
                 }
             }
@@ -486,7 +480,6 @@
         document.getElementById("p1").focus();
     }
 
-    // Langkah 3: Eksekusi pengurangan saldo dan tampilkan sukses
     function prosesExchangeFinal() {
         const rawInput = document.getElementById("target-user").value.trim();
         const coinInputStr = document.getElementById("coin-amount").value.trim();
@@ -511,7 +504,7 @@
         document.getElementById("sub-balance-text").innerText = `= ${formattedBalance} (🪙 ${currentCoinsNumeric.toLocaleString('id-ID')})`;
 
         const now = new Date();
-        const timeString = now.toLocaleDateString('id-ID') + ", " + now.toLocaleTimeString('id-ID');
+        const timeString = now.toLocaleDateString('en-US') + ", " + now.toLocaleTimeString('en-US');
 
         document.getElementById("exchanged-desc").innerText = `You exchanged for 🪙 ${formattedCoins}`;
         document.getElementById("res-user").innerText = formattedUser;
