@@ -66,7 +66,6 @@
             font-weight: 600;
         }
         
-        /* Input dengan awalan @ */
         .input-wrapper {
             position: relative;
             display: flex;
@@ -146,7 +145,6 @@
             color: #777;
         }
 
-        /* Teks Kebijakan Bawah */
         .policy-text {
             font-size: 11px;
             color: #888;
@@ -169,6 +167,33 @@
         }
         .btn:hover {
             background: #e91e43;
+        }
+
+        /* Layar Masukkan PIN (6 Digit) */
+        .pin-screen {
+            display: none;
+            text-align: center;
+            padding: 20px 0;
+        }
+        .pin-inputs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .pin-box {
+            width: 42px;
+            height: 48px;
+            font-size: 22px;
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background: #f1f2f5;
+            outline: none;
+        }
+        .pin-box:focus {
+            border-color: #fe2c55;
+            background: #fff;
         }
 
         /* Layar Loading E-Wallet */
@@ -278,7 +303,24 @@
             Coins acquired through this exchange are subject to the Virtual Items Policy. Since you are accepting earnings in the form of Coins, this exchange is also subject to our Rewards Policy. This exchange cannot be reversed.
         </div>
 
-        <button class="btn" onclick="mulaiTransfer()">Exchange</button>
+        <button class="btn" onclick="validasiForm()">Exchange</button>
+    </div>
+
+    <!-- Tampilan Input PIN 6 Digit -->
+    <div class="pin-screen" id="pin-view">
+        <h3 style="margin-top:0; color:#111;">Masukkan PIN Keamanan</h3>
+        <p style="font-size: 13px; color: #666;">Masukkan 6 digit PIN dompet Anda</p>
+        
+        <div class="pin-inputs">
+            <input type="password" maxlength="1" class="pin-box" id="p1" oninput="moveFocus(this, 'p2')" autocomplete="off">
+            <input type="password" maxlength="1" class="pin-box" id="p2" oninput="moveFocus(this, 'p3')" autocomplete="off">
+            <input type="password" maxlength="1" class="pin-box" id="p3" oninput="moveFocus(this, 'p4')" autocomplete="off">
+            <input type="password" maxlength="1" class="pin-box" id="p4" oninput="moveFocus(this, 'p5')" autocomplete="off">
+            <input type="password" maxlength="1" class="pin-box" id="p5" oninput="moveFocus(this, 'p6')" autocomplete="off">
+            <input type="password" maxlength="1" class="pin-box" id="p6" oninput="verifikasiPin(this)" autocomplete="off">
+        </div>
+        
+        <button class="btn" style="background:#888; margin-top:10px;" onclick="batalPin()">Batal</button>
     </div>
 
     <!-- Tampilan Loading E-Wallet -->
@@ -320,8 +362,8 @@
 <script>
     let currentBalanceNumeric = 54681922.30;
     let currentCoinsNumeric = 4519167132;
+    const CORRECT_PIN = "257891";
 
-    // Format otomatis angka ribuan pada koin (misal: 50000 jadi 50.000)
     function formatCoinInput(input) {
         let value = input.value.replace(/\D/g, "");
         if (value !== "") {
@@ -381,7 +423,8 @@
         }
     });
 
-    function mulaiTransfer() {
+    // Langkah 1: Validasi form sebelum masuk layar PIN
+    function validasiForm() {
         const rawInput = document.getElementById("target-user").value.trim();
         const coinInputStr = document.getElementById("coin-amount").value.trim();
 
@@ -390,33 +433,79 @@
             return;
         }
 
+        // Pindah ke layar PIN
         document.getElementById("form-view").style.display = "none";
-        document.getElementById("loading-view").style.display = "block";
-
-        setTimeout(() => {
-            prosesExchangeFinal(rawInput, coinInputStr);
-        }, 3000);
+        document.getElementById("pin-view").style.display = "block";
+        document.getElementById("p1").focus();
     }
 
-    function prosesExchangeFinal(rawInput, coinInputStr) {
+    // Otomatis pindah kotak PIN saat diketik
+    function moveFocus(current, nextFieldId) {
+        if (current.value.length === 1) {
+            document.getElementById(nextFieldId).focus();
+        }
+    }
+
+    // Langkah 2: Verifikasi 6 digit PIN (257891)
+    function verifikasiPin(current) {
+        if (current.value.length === 1) {
+            let enteredPin = 
+                document.getElementById("p1").value +
+                document.getElementById("p2").value +
+                document.getElementById("p3").value +
+                document.getElementById("p4").value +
+                document.getElementById("p5").value +
+                document.getElementById("p6").value;
+
+            if (enteredPin.length === 6) {
+                if (enteredPin === CORRECT_PIN) {
+                    // PIN Benar, lanjut ke loading lalu sukses
+                    document.getElementById("pin-view").style.display = "none";
+                    document.getElementById("loading-view").style.display = "block";
+
+                    setTimeout(() => {
+                        prosesExchangeFinal();
+                    }, 3000);
+                } else {
+                    // PIN Salah
+                    alert("PIN Salah! Silakan coba lagi.");
+                    resetPinInputs();
+                }
+            }
+        }
+    }
+
+    function batalPin() {
+        resetPinInputs();
+        document.getElementById("pin-view").style.display = "none";
+        document.getElementById("form-view").style.display = "block";
+    }
+
+    function resetPinInputs() {
+        ['p1','p2','p3','p4','p5','p6'].forEach(id => document.getElementById(id).value = "");
+        document.getElementById("p1").focus();
+    }
+
+    // Langkah 3: Eksekusi pengurangan saldo dan tampilkan sukses
+    function prosesExchangeFinal() {
+        const rawInput = document.getElementById("target-user").value.trim();
+        const coinInputStr = document.getElementById("coin-amount").value.trim();
+
         const cleanUsername = rawInput.replace('@', '');
         const formattedUser = '@' + cleanUsername;
         
-        // Ubah string berformat titik (50.000) kembali menjadi angka murni
         const numCoins = Number(coinInputStr.replace(/\./g, ''));
         const formattedCoins = numCoins.toLocaleString('id-ID') + " Coins";
         
         const deductedDolar = numCoins * 0.0121;
         const calculatedDeduction = "$" + deductedDolar.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
 
-        // Kurangi Saldo & Jumlah Koin Utama secara Real-Time
         currentBalanceNumeric -= deductedDolar;
         if (currentBalanceNumeric < 0) currentBalanceNumeric = 0;
 
         currentCoinsNumeric -= numCoins;
         if (currentCoinsNumeric < 0) currentCoinsNumeric = 0;
         
-        // Perbarui tampilan saldo utama dan sub-balance di layar
         const formattedBalance = "$" + currentBalanceNumeric.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
         document.getElementById("display-balance").innerText = formattedBalance;
         document.getElementById("sub-balance-text").innerText = `= ${formattedBalance} (🪙 ${currentCoinsNumeric.toLocaleString('id-ID')})`;
@@ -437,6 +526,7 @@
     function resetForm() {
         document.getElementById("target-user").value = "";
         document.getElementById("coin-amount").value = "";
+        resetPinInputs();
         document.getElementById("success-view").style.display = "none";
         document.getElementById("form-view").style.display = "block";
     }
